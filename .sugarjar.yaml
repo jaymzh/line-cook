@@ -1,0 +1,7 @@
+on_push: [lint]
+lint:
+  - black -l 80 .
+  - python3 -m mypy .
+  - markdownlint-cli2 --fix *.md
+unit:
+  - pytest --cov=bin --cov-report=term-missing

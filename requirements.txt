@@ -1,0 +1,6 @@
+PyYAML
+black==25.12.0
+mypy
+pytest
+pytest-cov
+types-PyYAML

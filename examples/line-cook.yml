@@ -1,0 +1,45 @@
+# Example line-cook.yaml configuration
+
+# Bot label for PRs and issues (singular)
+bot_label: "line-cook"
+
+# Label for split PRs
+split_label: "line-cook-pr-split"
+
+# Bot command prefix
+bot_command_prefix: "#linecook"
+
+# Base branch for PRs (defaults to "main")
+base_branch: "main"
+
+# Prefix for PR branch names (defaults to "line-cook")
+pr_branch_prefix: "line-cook"
+
+# Additional universe upstreams
+# Each entry requires 'prefix' and 'repo_url'
+# Remote names are automatically: {prefix}_upstream (e.g., pd_upstream)
+universe_upstreams:
+  pd-chef-cookbooks:   # name doesn't matter, just needs to be unique
+    prefix: pd
+    repo_url: https://github.com/jaymzh/chef-fb-api-cookbooks.git
+    branch: main        # Optional, defaults to 'main'
+    ignore_cookbooks: []  # Optional, defaults to empty list
+
+  # You can add more upstreams:
+  # another-upstream:
+  #   prefix: xyz
+  #   repo_url: https://github.com/example/chef-cookbooks.git
+  #   ignore_cookbooks:
+  #     - xyz_test
+
+# While you should never need to, but if for some strange reason you need
+# to change the configuration for the primary FB upstream repo, you can use
+# the `upstream_overrides` key, and accepts any key that a universe upstream
+# would accept. For example:
+#
+#   upstream_overrides:
+#     ignore_cookbooks:
+#       - ...
+#
+# Note that by default `fb_init` and `fb_init_sample` are ignored in the
+# primary repo.

@@ -1,0 +1,6 @@
+{
+    "config": {
+        "MD007": { "indent": 3 },
+        "MD013": { "code_blocks": false }
+    }
+}
