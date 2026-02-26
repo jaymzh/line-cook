@@ -3,14 +3,20 @@
 [![Lint](https://github.com/jaymzh/line-cook/actions/workflows/lint.yml/badge.svg)](https://github.com/jaymzh/line-cook/actions/workflows/lint.yml)
 [![Unit Tests](https://github.com/jaymzh/line-cook/actions/workflows/unit.yml/badge.svg)](https://github.com/jaymzh/line-cook/actions/workflows/unit.yml)
 
-Automated bot for syncing upstream Facebook Chef cookbooks to your downstream
-repo and managing pull requests. Works with both the primary Facebook repo
-as well as UNIVERSE repos.
+Line cook is an automated bot for syncing upstream Facebook Chef cookbooks to
+your downstream repo and managing pull requests. Works with both the primary
+Facebook repo as well as UNIVERSE repos. Think of it as Dependabot, but for
+FB-style Chef cookbooks.
 
-## Overview
+Since the model avoids versions, this uses a model similar to
+[ShipIt](https://github.com/facebookarchive/fbshipit) to walk commits and sync
+them. It will make a PR with a list of cherry-picked commits relevant to your
+cookbooks to get you up-to-date.
 
-Line Cook automates the process of keeping your Chef cookbook repository in
-sync with Facebook's upstream Chef cookbooks. It:
+Like Dependabot, it has highly configurable as well as accepts commands via
+comments on its PRs.
+
+It has a variety of features, but the high level ones are:
 
 - **Automatically syncs** commits from the upstream repository
 - **Creates PRs** with detailed commit information and trailers
