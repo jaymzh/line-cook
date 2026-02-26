@@ -19,6 +19,15 @@ sync with Facebook's upstream Chef cookbooks. It:
 - **Supports interactive commands** for PR management (split, rebase)
 - **Provides feedback** via PR/issue comments on command success or failure
 
+See some examples:
+
+- [Sample PR with upstream
+  updates](https://github.com/socallinuxexpo/scale-chef/pull/563)
+- [Sample Issue with sync
+  conflicts](https://github.com/socallinuxexpo/scale-chef/issues/554)
+- [Sample Issue with pending local changes to be pushed
+  upstream](https://github.com/socallinuxexpo/scale-chef/issues/562)
+
 ## How It Works
 
 The bot runs in two modes:
