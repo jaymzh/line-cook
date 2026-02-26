@@ -1,0 +1,45 @@
+name: Line Cook - Upstream Sync
+
+on:
+  # allow manual trigger from UI
+  workflow_dispatch:
+
+  # scheduled sync
+  schedule:
+    - cron: '0 6 * * *'
+
+  # When one a Line Cook PR or Issue is closed, we want to run another sync, so
+  # we notify on all PR closes, but on _target, so it runs in the context of
+  # the main branch (which has access to secrets). The bot will check if it's
+  # label is there, and if not, do nothing.
+  pull_request_target:
+    types: [closed]
+    branches:
+      - main
+  issues:
+    types: [closed]
+
+  # We want to run a sync on PRs, in dry-run mode, to make sure things
+  # are working. The reusable workflow checks it's a branch-based PR.
+  pull_request: 
+    branches:
+      - main
+    paths:
+      - ".github/workflows/line-cook-sync.yml"
+
+# Ensure only one bot run executes at a time across all triggers
+# IMPORTANT: Make sure the 'group' here matches the group in both
+# of your workflows.
+concurrency:
+  group: line-cook
+  cancel-in-progress: false  # Queue runs instead of canceling
+
+jobs:
+  sync:
+    name: Run sync
+    uses: jaymzh/line-cook/.github/workflows/reusable-line-cook.yml@main
+    with:
+      python_version: '3.11'
+      dry_run: ${{ github.event_name == 'pull_request' }}
+    secrets:
+      gh_token: ${{ secrets.GITHUB_TOKEN }}

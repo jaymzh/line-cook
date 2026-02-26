@@ -1,0 +1,21 @@
+name: Line Cook - Command handler
+
+on:
+  issue_comment:
+    types: [created]
+
+# Ensure only one bot run executes at a time across all triggers.
+# IMPORTANT: Make sure the 'group' here matches the group in both
+# of your workflows.
+concurrency:
+  group: line-cook
+  cancel-in-progress: false  # Queue runs instead of canceling
+
+jobs:
+  split:
+    name: Handle '#linecook' commands
+    uses: jaymzh/line-cook/.github/workflows/reusable-line-cook.yml@main
+    with:
+      python_version: '3.11'
+    secrets:
+      gh_token: ${{ secrets.GITHUB_TOKEN }}
