@@ -872,7 +872,7 @@ class LineCook:
         self.logger.debug(
             f"Updating PR #{pr_number} with {len(commits)} commits"
         )
-        (title, body) = self.pr_title_and_description_from_commits(
+        title, body = self.pr_title_and_description_from_commits(
             commits, trailer_key
         )
         if not self.dry_run:
@@ -1234,7 +1234,7 @@ class LineCook:
         self.logger.debug(
             f"Creating PR for branch {branch} with {len(commits)} commits"
         )
-        (title, body) = self.pr_title_and_description_from_commits(
+        title, body = self.pr_title_and_description_from_commits(
             commits, trailer_key
         )
         if not self.dry_run:
