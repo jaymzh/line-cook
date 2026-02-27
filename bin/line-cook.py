@@ -161,6 +161,8 @@ class LineCook:
     Line Cook - Bot to sync upstream cookbooks to local fork.
     """
 
+    TAIL = "Brought to you by [Line Cook](https://github.com/jaymzh/line-cook/)"
+
     def __init__(
         self,
         config: Dict,
@@ -702,6 +704,7 @@ class LineCook:
         body += f" all the `{trailer_key}` trailers in tact.\n\n"
         body += "\n".join(commit_entries)
         body += "\n\nCommands:\n```\t" + "\n\t".join(cmds) + "\n```\n"
+        body += f"\n{self.TAIL}\n"
 
         title = f"Sync upstream ({len(commits)} commits)"
 
@@ -960,6 +963,7 @@ class LineCook:
         )
 
         body = "\n".join(body_lines)
+        body += f"\n\n{self.TAIL}\n"
 
         # Check for existing conflict issue for this commit
         existing_issue = None
@@ -1169,6 +1173,7 @@ class LineCook:
             ]
 
             body = "\n".join(body_lines)
+            body += f"\n\n{self.TAIL}"
 
             # Check for existing issue
             existing_issue = self.find_existing_issue_for_cookbook(cookbook)
@@ -1326,6 +1331,8 @@ This establishes the initial upstream pointer.
 {trailer_key}: {baseline}
 
 Merge this PR to enable automated upstream syncing.
+
+{self.TAIL}
 """
 
             if existing_pr:
@@ -2355,6 +2362,8 @@ Merge this PR to enable automated upstream syncing.
                     "\nMerge this PR to sync these cookbooks. After "
                     "merging, run sync again to create the onboarding PR.\n"
                 )
+
+            body += f"\n{self.TAIL}\n"
 
             if existing_pr:
                 # Update existing PR
