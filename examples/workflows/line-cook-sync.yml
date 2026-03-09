@@ -27,6 +27,11 @@ on:
     paths:
       - ".github/workflows/line-cook-sync.yml"
 
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
 # Ensure only one bot run executes at a time across all triggers
 # IMPORTANT: Make sure the 'group' here matches the group in both
 # of your workflows.
