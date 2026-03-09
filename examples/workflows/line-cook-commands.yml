@@ -11,6 +11,11 @@ concurrency:
   group: line-cook
   cancel-in-progress: false  # Queue runs instead of canceling
 
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
 jobs:
   split:
     name: Handle '#linecook' commands

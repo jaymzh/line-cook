@@ -180,6 +180,10 @@ with `--fix-missing-baselines`.
 
 The bot requires two GitHub Actions workflows in your repository.
 
+In order for the bot to create pull requests, you must enable `Allow GitHub
+Actions to create and approve pull requests` under Settings -> Actions ->
+General.
+
 ### 1. Upstream Sync Workflow
 
 This is the primary workflow that runs the sync process.
