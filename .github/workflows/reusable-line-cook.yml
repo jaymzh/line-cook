@@ -44,13 +44,15 @@ on:
         description: 'GitHub token for API access'
         required: false
 
-permissions:
-  contents: write
-  issues: write
-  pull-requests: write
+permissions: {}
 
 jobs:
   sync:
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+
     name: Run sync bot
     runs-on: ubuntu-latest
 
