@@ -1,13 +1,13 @@
 name: DCO Check
 on: [pull_request]
 
-permissions:
-  contents: read
+permissions: {}
 
 jobs:
   dco_check_job:
     permissions:
-      pull-requests: read  # for tim-actions/get-pr-commits to get list of commits from the PR
+      contents: read
+      pull-requests: read
     runs-on: ubuntu-latest
     name: DCO Check
     steps:

@@ -44,6 +44,11 @@ on:
         description: 'GitHub token for API access'
         required: false
 
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
 jobs:
   sync:
     name: Run sync bot
