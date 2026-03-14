@@ -3220,6 +3220,10 @@ Merge this PR to enable automated upstream syncing.
             comment_body = event["comment"]["body"]
             pr_number = event["issue"]["number"]
 
+        # At this point, both values must be set
+        assert comment_body is not None, "comment_body must be set"
+        assert pr_number is not None, "pr_number must be set"
+
         self.logger.debug(f"Processing comment on PR #{pr_number}")
 
         # Parse the command
