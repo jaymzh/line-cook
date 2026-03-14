@@ -83,7 +83,7 @@ jobs:
         run: |
           cd line-cook
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install --require-hashes -r requirements.txt
 
       - name: Configure git
         run: |
