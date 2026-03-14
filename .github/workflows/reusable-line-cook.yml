@@ -82,7 +82,6 @@ jobs:
       - name: Install dependencies
         run: |
           cd line-cook
-          python -m pip install --upgrade pip
           pip install --require-hashes -r requirements.txt
 
       - name: Configure git
