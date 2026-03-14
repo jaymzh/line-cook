@@ -23,7 +23,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: ["python", "ruby"]
+        language: ["python"]
 
     steps:
       - name: Harden the runner (Audit all outbound calls)

@@ -2,6 +2,8 @@
 
 [![Lint](https://github.com/jaymzh/line-cook/actions/workflows/lint.yml/badge.svg)](https://github.com/jaymzh/line-cook/actions/workflows/lint.yml)
 [![Unit Tests](https://github.com/jaymzh/line-cook/actions/workflows/unit.yml/badge.svg)](https://github.com/jaymzh/line-cook/actions/workflows/unit.yml)
+[![DCO Check](https://github.com/jaymzh/line-cook/actions/workflows/dco.yml/badge.svg)](https://github.com/jaymzh/line-cook/actions/workflows/dco.yml)
+[![CodeQL](https://github.com/jaymzh/line-cook/actions/workflows/codeql.yml/badge.svg)](https://github.com/jaymzh/line-cook/actions/workflows/codeql.yml)
 
 Line cook is an automated bot for syncing upstream Facebook Chef cookbooks to
 your downstream repo and managing pull requests. Works with both the primary
