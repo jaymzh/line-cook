@@ -11,7 +11,7 @@ permissions: {}
 jobs:
   lint:
     permissions:
-      - contents: read
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: Harden the runner (Audit all outbound calls)
