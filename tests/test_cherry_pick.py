@@ -85,13 +85,14 @@ class TestCherryPickWithTrailer(unittest.TestCase):
         mock_already_applied.assert_called_once()
 
     @patch.object(linecook_module.LineCook, "is_commit_already_applied")
+    @patch.object(linecook_module.LineCook, "filter_and_commit_fb_changes")
     @patch.object(linecook_module.LineCook, "_abort_cherry_pick_safely")
     @patch.object(linecook_module.LineCook, "_categorize_conflicts")
     @patch.object(linecook_module.LineCook, "_get_conflicting_files")
     @patch.object(linecook_module.LineCook, "_capture_basic_conflict_info")
     @patch.object(linecook_module, "try_git")
     @patch.object(linecook_module, "run")
-    def test_cherry_pick_conflict_resolution(
+    def test_cherry_pick_auto_resolve_with_imported_changes(
         self,
         mock_run: MagicMock,
         mock_try_git: MagicMock,
@@ -99,26 +100,86 @@ class TestCherryPickWithTrailer(unittest.TestCase):
         mock_get_conflicts: MagicMock,
         mock_categorize: MagicMock,
         mock_abort: MagicMock,
+        mock_filter: MagicMock,
         mock_already_applied: MagicMock,
     ) -> None:
-        """Test cherry-pick with auto-resolvable conflicts."""
+        """Test that auto-resolvable conflicts still apply imported cookbook changes.
+
+        When a commit touches both imported and non-imported cookbooks and
+        only the non-imported ones conflict, we should resolve those conflicts
+        and still commit the imported cookbook changes — not skip the commit
+        entirely, which would cause downstream commits to fail.
+        """
         mock_run.return_value = "[]"
         mock_already_applied.return_value = False
-        mock_try_git.return_value = (False, "", "conflict error")
-        mock_get_conflicts.return_value = ["cookbooks/pd_other/file.rb"]
-        mock_categorize.return_value = ([], ["cookbooks/pd_other/file.rb"])
         mock_basic_info.return_value = "basic conflict info"
+        mock_get_conflicts.return_value = ["cookbooks/fb_other/file.rb"]
+        mock_categorize.return_value = ([], ["cookbooks/fb_other/file.rb"])
+        mock_filter.return_value = True
+        # cherry-pick fails; cat-file (HEAD check) returns file exists in HEAD
+        mock_try_git.side_effect = [
+            (False, "", "conflict"),  # cherry-pick
+            (True, "", ""),  # cat-file HEAD check
+            (True, "", ""),  # checkout --ours
+            (True, "", ""),  # git add (via try_git? no, via git())
+        ]
 
         with patch.object(linecook_module.LineCook, "_initialize_remotes"):
             with patch.object(linecook_module.LineCook, "_check_labels_exist"):
                 bot = linecook_module.LineCook(config=self.config, dry_run=True)
 
-        result = bot.cherry_pick_with_trailer(
-            "abc1234567890", self.upstream_config
-        )
+        with patch.object(linecook_module, "git"):
+            result = bot.cherry_pick_with_trailer(
+                "abc1234567890", self.upstream_config
+            )
+
+        self.assertTrue(result)
+        mock_abort.assert_not_called()
+        mock_filter.assert_called_once()
+
+    @patch.object(linecook_module.LineCook, "is_commit_already_applied")
+    @patch.object(linecook_module.LineCook, "filter_and_commit_fb_changes")
+    @patch.object(linecook_module.LineCook, "_abort_cherry_pick_safely")
+    @patch.object(linecook_module.LineCook, "_categorize_conflicts")
+    @patch.object(linecook_module.LineCook, "_get_conflicting_files")
+    @patch.object(linecook_module.LineCook, "_capture_basic_conflict_info")
+    @patch.object(linecook_module, "try_git")
+    @patch.object(linecook_module, "run")
+    def test_cherry_pick_auto_resolve_no_imported_changes(
+        self,
+        mock_run: MagicMock,
+        mock_try_git: MagicMock,
+        mock_basic_info: MagicMock,
+        mock_get_conflicts: MagicMock,
+        mock_categorize: MagicMock,
+        mock_abort: MagicMock,
+        mock_filter: MagicMock,
+        mock_already_applied: MagicMock,
+    ) -> None:
+        """Test auto-resolve with no imported cookbook changes returns False."""
+        mock_run.return_value = "[]"
+        mock_already_applied.return_value = False
+        mock_basic_info.return_value = "basic conflict info"
+        mock_get_conflicts.return_value = ["cookbooks/fb_other/file.rb"]
+        mock_categorize.return_value = ([], ["cookbooks/fb_other/file.rb"])
+        mock_filter.return_value = False  # no imported changes to commit
+        mock_try_git.side_effect = [
+            (False, "", "conflict"),  # cherry-pick
+            (True, "", ""),  # cat-file HEAD check
+            (True, "", ""),  # checkout --ours
+        ]
+
+        with patch.object(linecook_module.LineCook, "_initialize_remotes"):
+            with patch.object(linecook_module.LineCook, "_check_labels_exist"):
+                bot = linecook_module.LineCook(config=self.config, dry_run=True)
+
+        with patch.object(linecook_module, "git"):
+            result = bot.cherry_pick_with_trailer(
+                "abc1234567890", self.upstream_config
+            )
 
         self.assertFalse(result)
-        mock_abort.assert_called_once()
+        mock_filter.assert_called_once()
 
 
 class TestFilterAndCommit(unittest.TestCase):

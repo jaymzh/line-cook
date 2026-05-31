@@ -144,6 +144,24 @@ class TestUpstreamCommitsSince(unittest.TestCase):
         self.assertEqual(len(result), 3)
         self.assertEqual(result, ["commit1", "commit2", "commit3"])
 
+    @patch.object(linecook_module, "git")
+    @patch.object(linecook_module, "run")
+    def test_upstream_commits_since_uses_topo_order(
+        self, mock_run: MagicMock, mock_git: MagicMock
+    ) -> None:
+        """Test that --topo-order is used to prevent applying commits out of dependency order."""
+        mock_run.return_value = "[]"
+        mock_git.return_value = "commit1\ncommit2"
+
+        with patch.object(linecook_module.LineCook, "_initialize_remotes"):
+            with patch.object(linecook_module.LineCook, "_check_labels_exist"):
+                bot = linecook_module.LineCook(config=self.config, dry_run=True)
+
+        bot.upstream_commits_since("abc1234567890", self.upstream_config)
+
+        call_args = mock_git.call_args[0]
+        self.assertIn("--topo-order", call_args)
+
     @patch.object(linecook_module, "run")
     def test_upstream_commits_since_no_pointer(
         self, mock_run: MagicMock
