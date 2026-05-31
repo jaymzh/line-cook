@@ -538,6 +538,7 @@ class LineCook:
         commits = git(
             "rev-list",
             "--reverse",
+            "--topo-order",
             f"{pointer}..{remote}/{branch}",
         ).splitlines()
         self.logger.debug(f"Found {len(commits)} upstream commits")
@@ -1712,13 +1713,30 @@ Merge this PR to enable automated upstream syncing.
                 )
 
                 if auto_resolve and not real_conflicts:
-                    # Only non-relevant conflicts - skip this commit
+                    # Conflicts only in non-imported cookbooks — resolve them
+                    # by taking "ours" (discarding changes to cookbooks we
+                    # haven't imported) then commit just the imported-cookbook
+                    # changes. Without this, a commit that touches both
+                    # imported and non-imported cookbooks would be silently
+                    # dropped, causing later commits that depend on the
+                    # imported-cookbook portion to fail.
                     self.logger.info(
-                        f"Skipping {commit[:8]} - conflicts only in "
-                        "non-matching or non-imported cookbooks"
+                        f"Conflicts in non-imported cookbooks for {commit[:8]}, "
+                        "resolving and applying imported cookbook changes"
                     )
-                    self._abort_cherry_pick_safely()
-                    return False
+                    for file_path in auto_resolve:
+                        file_in_head, _, _ = try_git(
+                            "cat-file", "-e", f"HEAD:{file_path}"
+                        )
+                        if file_in_head:
+                            try_git("checkout", "--ours", file_path)
+                            git("add", file_path)
+                        else:
+                            try_git("rm", "-f", file_path)
+                    success = self.filter_and_commit_fb_changes(
+                        commit, upstream_config
+                    )
+                    return success
                 else:
                     # Real conflicts in local cookbooks - report error
                     if real_conflicts:
