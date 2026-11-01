@@ -1,6 +1,6 @@
 PyYAML==6.0.3
-black==26.5.1
-mypy==2.3.1
-pytest==9.1.1
+black==26.10.1
+mypy==2.4.1
+pytest==9.2.0
 pytest-cov==7.1.0
 types-PyYAML==6.0.12.20260906
